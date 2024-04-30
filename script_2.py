@@ -40,7 +40,8 @@ def text_search(keyword: str, text_to_search: str) -> int:
     """
     Count the number times the keyword appears in the text
     """
-    translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
+    translator = str.maketrans(
+        string.punctuation, ' ' * len(string.punctuation))
     try:
         text = text_to_search.translate(translator).lower()
     except Exception as e:
@@ -50,15 +51,38 @@ def text_search(keyword: str, text_to_search: str) -> int:
     return occurrences
 
 
+def first_sentences(keyword: str, text_to_search: str) -> str:
+    try:
+        text = text_to_search.lower()
+        returned_text = []
+        count = 0
+        sentences = text.split('.')
+        for sentence in sentences:
+            if count >= 2:
+                break
+            if keyword in sentence:
+                returned_text.append(sentence.strip() + '. ')
+                count += 1
+        return ''.join(returned_text)
+    except Exception as e:
+        text = ""
+        print(f"Error: {e}")
+
+    return None
+
+
 sample_text_file = "input/article-text.txt"
 with open(sample_text_file, "r") as f:
     sample_text = f.read()
 
-sample_keyword = "states"
+sample_keyword = input("Enter search term: ")
 
 word_count = text_search(keyword=sample_keyword, text_to_search=sample_text)
+first_sentence = first_sentences(
+    keyword=sample_keyword, text_to_search=sample_text)
 occurrences_sentence = f"Found {word_count} occurrences in the text"
 print(occurrences_sentence)
+print(first_sentence)
 
 save_file_location = "output/save_string.txt"
 with open(save_file_location, "w") as f:
