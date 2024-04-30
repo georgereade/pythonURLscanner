@@ -3,15 +3,24 @@ from bs4 import BeautifulSoup
 import string
 
 # Making a request to get HTML from a page
-url = "https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"
-r = requests.get(url)
+url = "https://www.bbc.co.uk/sport/cricket/articles/c6pylnje8d2o"
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
+r = requests.get(url, headers=headers)
 print(f"Response Code: {r.status_code}")
 
 # Converting the HTML into a structured object
 html = r.text
+# break into lines and remove leading and trailing space on each
+lines = (line.strip() for line in html.splitlines())
+# break multi-headlines into a line each
+chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+# drop blank lines
+html = '\n'.join(chunk for chunk in chunks if chunk)
 soup = BeautifulSoup(html, "html.parser")
 with open("test.html", "w", encoding="utf-8") as f:
     f.write(str(soup))
+
 
 # Identify p elements and return text
 input_folder = "input/article-text.txt"
@@ -19,7 +28,7 @@ paragraphs = soup.find_all("p")
 h1 = soup.find_all("h1")
 h2 = soup.find_all("h2")
 
-df = open(input_folder, "w", encoding="utf-8")
+df = open(input_folder, "w")
 
 for i in h1:
     h1text = i.get_text()
@@ -34,6 +43,17 @@ for p in paragraphs:
     df.write(ptext)
 
 df.close()
+
+
+# opening and creating new .txt file
+with open(
+    "input/article-text.txt", 'r') as r, open(
+        "input/article-text-clean.txt", 'w') as o:
+
+    for line in r:
+        # isspace() function
+        if not line.isspace():
+            o.write(line)
 
 
 def text_search(keyword: str, text_to_search: str) -> int:
@@ -71,11 +91,11 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
     return None
 
 
-sample_text_file = "input/article-text.txt"
+sample_text_file = "input/article-text-clean.txt"
 with open(sample_text_file, "r") as f:
     sample_text = f.read()
 
-sample_keyword = input("Enter search term: ")
+sample_keyword = input("Enter search term: ").lower()
 
 word_count = text_search(keyword=sample_keyword, text_to_search=sample_text)
 first_sentence = first_sentences(
