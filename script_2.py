@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import string
+import re
 
 # Making a request to get HTML from a page
-url = "https://www.bbc.co.uk/sport/cricket/articles/c6pylnje8d2o"
+url = "https://www.vg247.com/diablo-youtube-rave-international-dance-day"
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
 r = requests.get(url, headers=headers)
@@ -18,7 +19,7 @@ chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
 # drop blank lines
 html = '\n'.join(chunk for chunk in chunks if chunk)
 soup = BeautifulSoup(html, "html.parser")
-with open("test.html", "w", encoding="utf-8") as f:
+with open("webpage.html", "w", encoding="utf-8") as f:
     f.write(str(soup))
 
 
@@ -47,8 +48,8 @@ df.close()
 
 # opening and creating new .txt file
 with open(
-    "input/article-text.txt", 'r') as r, open(
-        "input/article-text-clean.txt", 'w') as o:
+    "input/article-text.txt", 'r', encoding="utf-8") as r, open(
+        "input/article-text-clean.txt", 'w', encoding="utf-8") as o:
 
     for line in r:
         # isspace() function
@@ -76,9 +77,10 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
         text = text_to_search.lower()
         returned_text = []
         count = 0
-        sentences = text.split('.')
+        sentences = text.split('. ')
+        # sentences = re.split('. | ? ', text)
         for sentence in sentences:
-            if count >= 4:
+            if count >= 2:
                 break
             if keyword in sentence:
                 returned_text.append(sentence.strip() + '. ')
@@ -92,7 +94,7 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
 
 
 sample_text_file = "input/article-text-clean.txt"
-with open(sample_text_file, "r") as f:
+with open(sample_text_file, "r", encoding="utf-8") as f:
     sample_text = f.read()
 
 sample_keyword = input("Enter search term: ").lower()
