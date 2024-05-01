@@ -28,7 +28,7 @@ paragraphs = soup.find_all("p")
 h1 = soup.find_all("h1")
 h2 = soup.find_all("h2")
 
-df = open(input_folder, "w")
+df = open(input_folder, "w", encoding="utf-8")
 
 for i in h1:
     h1text = i.get_text()
@@ -78,7 +78,7 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
         count = 0
         sentences = text.split('.')
         for sentence in sentences:
-            if count >= 2:
+            if count >= 4:
                 break
             if keyword in sentence:
                 returned_text.append(sentence.strip() + '. ')
