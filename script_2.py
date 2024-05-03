@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import string
-import re
 
 # Making a request to get HTML from a page
 url = "https://www.bbc.co.uk/news/uk-67087757"
@@ -20,17 +19,20 @@ lines = (line.strip() for line in html.splitlines())
 chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
 # drop blank lines
 html = '\n'.join(chunk for chunk in chunks if chunk)
+
 soup = BeautifulSoup(html, "html.parser")
 with open("webpage.html", "w", encoding="utf-8") as f:
     f.write(str(soup))
 
 
-# Identify p elements and return text
+# Identify p and h elements and assign the text to a variable
 input_folder = "input/article-text.txt"
 paragraphs = soup.find_all("p")
 h1 = soup.find_all("h1")
 h2 = soup.find_all("h2")
 
+
+# Open and write elements to article-text.txt
 df = open(input_folder, "w", encoding="utf-8")
 
 for p in paragraphs:
@@ -48,7 +50,7 @@ for i in h2:
 df.close()
 
 
-# opening and creating new .txt file
+# delete empty lines from certain websites
 with open(
     "input/article-text.txt", 'r', encoding="utf-8") as r, open(
         "input/article-text-clean.txt", 'w', encoding="utf-8") as o:
@@ -80,7 +82,6 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
         returned_text = ['\n']
         count = 0
         sentences = text.split('. ')
-        # sentences = re.split('. | ? ', text)
         for sentence in sentences:
             if count >= 2:
                 break
@@ -101,9 +102,13 @@ with open(sample_text_file, "r", encoding="utf-8") as f:
 
 sample_keyword = input("Enter search term: ").lower()
 
+# call text_search function
 word_count = text_search(keyword=sample_keyword, text_to_search=sample_text)
+
+# call first_sentence function
 first_sentence = first_sentences(
     keyword=sample_keyword, text_to_search=sample_text)
+
 occurrences_sentence = f"Found {word_count} occurrences in the text"
 print(occurrences_sentence)
 print(first_sentence)
