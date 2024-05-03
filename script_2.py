@@ -4,11 +4,13 @@ import string
 import re
 
 # Making a request to get HTML from a page
-url = "https://www.vg247.com/diablo-youtube-rave-international-dance-day"
+url = "https://www.bbc.co.uk/news/uk-67087757"
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
 r = requests.get(url, headers=headers)
 print(f"Response Code: {r.status_code}")
+print(f"Response Code: {r.reason}")
+
 
 # Converting the HTML into a structured object
 html = r.text
@@ -31,17 +33,17 @@ h2 = soup.find_all("h2")
 
 df = open(input_folder, "w", encoding="utf-8")
 
+for p in paragraphs:
+    ptext = p.get_text()
+    df.write(ptext + ' ')
+
 for i in h1:
     h1text = i.get_text()
-    df.write(h1text)
+    df.write(h1text + ' ')
 
 for i in h2:
     h2text = i.get_text()
-    df.write(h2text)
-
-for p in paragraphs:
-    ptext = p.get_text()
-    df.write(ptext)
+    df.write(h2text + ' ')
 
 df.close()
 
@@ -75,7 +77,7 @@ def text_search(keyword: str, text_to_search: str) -> int:
 def first_sentences(keyword: str, text_to_search: str) -> str:
     try:
         text = text_to_search.lower()
-        returned_text = []
+        returned_text = ['\n']
         count = 0
         sentences = text.split('. ')
         # sentences = re.split('. | ? ', text)
@@ -83,7 +85,7 @@ def first_sentences(keyword: str, text_to_search: str) -> str:
             if count >= 2:
                 break
             if keyword in sentence:
-                returned_text.append(sentence.strip() + '. ')
+                returned_text.append(sentence.strip() + '. \n\n')
                 count += 1
         return ''.join(returned_text)
     except Exception as e:
